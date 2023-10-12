@@ -1,0 +1,127 @@
+---
+title: "Reading Data from the Web"
+author: "Wenxin Tian"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+Website = HTML + CSS
+
+HTML controls content, and CSS controls appearance. So extracting information comes down to choosing the unique selector tag.
+
+Workflow:
+
+- Download HTML using `read_html()`
+- Extract elements using `html_elements()` and CSS selector
+- Extract data with `html_extract()` and `html_table()`
+
+Load libraries:
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(httr)
+```
+
+## Read Tables from HTML:
+
+```{r, eval = F}
+url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+
+nsduh_html = read_html(url)
+
+# Imports every table stored as a list:
+
+nsduh_html |>
+  html_table()
+
+# Use specific ones:
+
+marj_use_df =
+  nsduh_html |>
+  html_table() |>
+  first() |>
+  slice(-1)  # removes first row
+
+marj_use_df
+```
+
+## Selector Gadget:
+
+Import Star Wars data, which are not tables:
+
+```{r}
+starwars_url = "https://www.imdb.com/list/ls070150896/"
+
+starwars_html = read_html(starwars_url)
+```
+
+Use Selector Gadget to select css tags on the website and paste it below:
+```{r}
+starwars_html |>
+  html_elements(".lister-item-header a")
+
+starwars_html |>
+  html_elements(".lister-item-header a") |>
+  html_text()
+
+starwars_html |>
+  html_elements(".text-small:nth-child(7) span:nth-child(5)") |>
+  html_text()
+```
+
+Make a df:
+
+```{r}
+startwars_df =
+  tibble(
+    title = 
+      starwars_html |>
+      html_elements(".lister-item-header a") |>
+      html_text(),
+    gross_rev = 
+      starwars_html |>
+      html_elements(".text-small:nth-child(7) span:nth-child(5)") |>
+      html_text()
+  )
+```
+
+## APIs:
+
+NYC Water Dataset:
+
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.csv") |> 
+  content()
+```
+
+BRFSS Dataset:
+
+```{r}
+# By defalt, GET will download only first 1000 lines.
+brfss_smart2010 = 
+  GET("https://chronicdata.cdc.gov/resource/acme-vg9e.csv") |>
+  content("parsed")
+
+# To download more lines:
+brfss_smart2010 = 
+  GET("https://chronicdata.cdc.gov/resource/acme-vg9e.csv",
+      query = list("$limit" = 5000)) |>
+  content("parsed")
+```
+
+More complicated example:
+
+```{r}
+poke_df = 
+  GET("http://pokeapi.co/api/v2/pokemon/1") |>
+  content()
+
+poke_df$name
+```
+
+
+
+
+
