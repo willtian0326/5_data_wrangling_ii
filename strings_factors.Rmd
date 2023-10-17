@@ -1,0 +1,8 @@
+---
+title: "Strings and Factors"
+author: "Wenxin Tian"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+
