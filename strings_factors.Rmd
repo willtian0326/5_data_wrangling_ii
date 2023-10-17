@@ -5,4 +5,93 @@ date: "`r Sys.Date()`"
 output: github_document
 ---
 
+```{r}
+library(rvest)
+library(tidyverse)
+library(p8105.datasets)
+```
+
+## Strings and Regular Expressions (Regex) :
+
+```{r}
+string_vec = c("my", "name", "is", "jeff")
+
+str_detect(string_vec, "je")
+
+"jeff" %in% string_vec
+
+str_replace(string_vec, "e", "E")
+```
+
+For exact matches, you can designate matches at the beginning or end of a line.
+
+```{r}
+string_vec = c(
+  "i think we all rule for participating",
+  "i think i have been caught",
+  "i think this will be quite fun actually",
+  "it will be fun, i think"
+  )
+
+str_detect(string_vec, "^i think")
+
+str_detect(string_vec, "i think$")
+```
+
+You can also designate a list of characters that count as a match:
+
+```{r}
+string_vec = c(
+  "Time for a Pumpkin Spice Latte!",
+  "went to the #pumpkinpatch last weekend",
+  "Pumpkin Pie is obviously the best pie",
+  "SMASHING PUMPKINS -- LIVE IN CONCERT!!"
+  )
+
+str_detect(string_vec,"[Pp]umpkin")
+```
+
+No need to list them. Can provide a list expression that counts as a match:
+
+```{r}
+string_vec = c(
+  '7th inning stretch',
+  '1st half soon to begin. Texas won the toss.',
+  'she is 5 feet 4 inches tall',
+  '3AM - cant sleep :('
+  )
+
+str_detect(string_vec, "^[0-9][a-zA-Z]")
+```
+
+The character `.` will match anything
+
+```{r}
+string_vec = c(
+  'Its 7:11 in the evening',
+  'want to go to 7-11?',
+  'my flight is AA711',
+  'NetBios: scanning ip 203.167.114.66'
+  )
+
+str_detect(string_vec, "7.11")
+```
+
+## Factors:
+
+```{r}
+vec_sex = factor(c("male", "male", "female", "female", "neither"))
+
+vec_sex
+
+as.numeric(vec_sex)
+
+vec_sex = fct_relevel(vec_sex, "male", "neither")
+
+vec_sex
+
+as.numeric(vec_sex)
+
+
+```
 
